@@ -150,7 +150,20 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                                   surfaceTintColor: Colors.transparent,
                                 ),
                                 onPressed: () {
-                                  // TODO: enviar código de verificación
+                                  final trimmedEmail = email.text.trim();
+                                  if (trimmedEmail.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Por favor ingresa el correo registrado.',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  FocusScope.of(context).unfocus();
+                                  context.push('/verification');
                                 },
                                 child: const Text('Enviar código de verificación'),
                               ),
