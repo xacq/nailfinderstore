@@ -31,3 +31,23 @@ App Flutter para control de cuentas y acceso (login/registro/recuperación) con 
      uses-material-design: true
      assets:
        - assets/ui/
+
+2. nstalar dependencias:
+   ```yaml
+   flutter pub get
+
+3. Ejecutar:
+   ```yaml
+   flutter run -d <device>
+
+4. Scripts útiles
+   ```yaml
+   flutter format . --set-exit-if-changed   # formato
+   flutter analyze                           # análisis estático
+   flutter test                              # tests
+
+5. Estructura
+   ```yaml
+   lib/features/auth/presentation/*: pantallas de Login, Registro, Nueva contraseña
+   assets/ui/*: imágenes de fondo y logos
+   app_router.dart: rutas con go_router
