@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'validators.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
   @override
@@ -15,6 +17,8 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
+    final passwordHintsText =
+        passwordIssues('').map((issue) => '• $issue').join('\n');
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -142,6 +146,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              passwordHintsText,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 14),
 
                           const Text('Repetir Contraseña'),
@@ -185,6 +199,62 @@ class _RegisterPageState extends State<RegisterPage> {
                                   surfaceTintColor: Colors.transparent,
                                 ),
                                 onPressed: () {
+                                  final emailValue = email.text.trim();
+                                  final passwordValue = pass.text.trim();
+                                  final confirmPasswordValue = pass2.text.trim();
+
+                                  email.text = emailValue;
+                                  pass.text = passwordValue;
+                                  pass2.text = confirmPasswordValue;
+
+                                  if (emailValue.isEmpty ||
+                                      passwordValue.isEmpty ||
+                                      confirmPasswordValue.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Completa todos los campos antes de continuar.',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (!isValidEmail(emailValue)) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Ingresa un correo electrónico válido.'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  final issues = passwordIssues(passwordValue);
+                                  if (issues.isNotEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          issues.map((issue) => '• $issue').join('\n'),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (passwordValue != confirmPasswordValue) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Las contraseñas no coinciden.'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Formulario válido. Continua con el registro.'),
+                                    ),
+                                  );
                                   // TODO: registrar
                                 },
                                 child: const Text('Registrar'),
