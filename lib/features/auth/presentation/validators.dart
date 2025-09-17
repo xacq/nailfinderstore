@@ -30,6 +30,7 @@ List<String> passwordIssues(String value) {
   }
 
   return issues;
+}
 
 class AuthValidators {
   AuthValidators._();
@@ -42,5 +43,4 @@ class AuthValidators {
   static bool isValidEmail(String value) {
     return _emailRegExp.hasMatch(value.trim());
   }
-///main
 }

@@ -64,7 +64,7 @@ class _VerificationPageState extends State<VerificationPage> {
           fontSize: 24,
           fontWeight: FontWeight.w600,
         ),
-        inputFormatters: const [
+        inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
           LengthLimitingTextInputFormatter(1),
         ],
