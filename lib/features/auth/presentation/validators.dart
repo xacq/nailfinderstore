@@ -1,3 +1,4 @@
+///codex/add-email-and-password-validation-utilities
 /// Utility helpers for validating auth related fields.
 ///
 /// These can be reused across forms so the validation rules live in a single
@@ -29,4 +30,17 @@ List<String> passwordIssues(String value) {
   }
 
   return issues;
+
+class AuthValidators {
+  AuthValidators._();
+
+  static final RegExp _emailRegExp = RegExp(
+    r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
+    caseSensitive: false,
+  );
+
+  static bool isValidEmail(String value) {
+    return _emailRegExp.hasMatch(value.trim());
+  }
+///main
 }

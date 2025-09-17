@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'validators.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   @override
@@ -144,6 +146,45 @@ class _LoginPageState extends State<LoginPage> {
                                   surfaceTintColor: Colors.transparent, // M3: evita tinte que aclare el botón
                                 ),
                                 onPressed: () {
+                                  final messenger =
+                                      ScaffoldMessenger.of(context);
+                                  final trimmedEmail = email.text.trim();
+                                  final trimmedPassword =
+                                      password.text.trim();
+
+                                  if (trimmedEmail.isEmpty) {
+                                    messenger.showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Por favor ingresa tu correo electrónico',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (!AuthValidators.isValidEmail(trimmedEmail)) {
+                                    messenger.showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'El correo electrónico no es válido',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (trimmedPassword.isEmpty) {
+                                    messenger.showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Por favor ingresa tu contraseña',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
                                   // TODO: login
                                 },
                                 child: const Text('Iniciar sesión'),
