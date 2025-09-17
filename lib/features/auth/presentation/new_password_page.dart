@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:nailfinderstore/features/auth/presentation/auth_validators.dart';
+
 class NewPasswordPage extends StatefulWidget {
   const NewPasswordPage({super.key});
   @override
@@ -156,6 +158,19 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                                       const SnackBar(
                                         content: Text(
                                           'Por favor ingresa el correo registrado.',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  final isEmailValid =
+                                      AuthValidators.isValidEmail(trimmedEmail);
+                                  if (!isEmailValid) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Por favor ingresa un correo electrónico válido.',
                                         ),
                                       ),
                                     );
