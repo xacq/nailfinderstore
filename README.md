@@ -51,3 +51,9 @@ App Flutter para control de cuentas y acceso (login/registro/recuperación) con 
    lib/features/auth/presentation/*: pantallas de Login, Registro, Nueva contraseña
    assets/ui/*: imágenes de fondo y logos
    app_router.dart: rutas con go_router
+
+
+##SECCION DE CONFIGURACIONES BD
+CREATE USER 'nailfinder'@'localhost' IDENTIFIED BY 'nailfinder-pass';
+GRANT ALL PRIVILEGES ON nailfinderstore.* TO 'nailfinder'@'localhost';
+FLUSH PRIVILEGES;
