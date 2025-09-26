@@ -54,6 +54,11 @@ App Flutter para control de cuentas y acceso (login/registro/recuperación) con 
 
 
 ##SECCION DE CONFIGURACIONES BD
+
 CREATE USER 'nailfinder'@'localhost' IDENTIFIED BY 'nailfinder-pass';
 GRANT ALL PRIVILEGES ON nailfinderstore.* TO 'nailfinder'@'localhost';
 FLUSH PRIVILEGES;
+
+Notas clave para alinear con tu esquema
+
+PK UUID: todas las entidades usan @PrimaryGeneratedColumn('uuid') en la base. El esquema define CHAR(36) DEFAULT (UUID()); TypeORM generará el UUID desde la app (sin invocar UUID() de MySQL), pero es totalmente compatible. 
