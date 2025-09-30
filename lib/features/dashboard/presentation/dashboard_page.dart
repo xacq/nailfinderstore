@@ -128,16 +128,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           if (services.isEmpty) {
 
             return const [
-
-              _EmptyCatalogSection.services(),
-
-              _EmptyCollectionCard(
-                icon: Icons.spa_outlined,
-                title: 'Aún no hay servicios disponibles',
-                description:
-                    'Publica tus servicios o sincroniza tu catálogo para mostrarlos aquí.',
-              ),
-
             ];
             return _PlaceholderList.services();
 
@@ -167,15 +157,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         if (technicians.isEmpty) {
 
           return const [
-
-            _EmptyCatalogSection.technicians(),
-
-            _EmptyCollectionCard(
-              icon: Icons.people_alt_outlined,
-              title: 'Todavía no hay técnicos visibles',
-              description:
-                  'Añade a tu equipo o invita colaboradores para que aparezcan en este listado.',
-            ),
 
           ];
 
@@ -593,7 +574,6 @@ class _CategoriesChips extends StatelessWidget {
 }
 
 
-
 class _EmptyCatalogSection extends StatelessWidget {
   const _EmptyCatalogSection.services()
       : type = _CatalogEmptyType.services;
@@ -730,9 +710,6 @@ enum _CatalogEmptyType { services, technicians }
 class _EmptyHighlight {
   const _EmptyHighlight({
 
-class _EmptyCollectionCard extends StatelessWidget {
-  const _EmptyCollectionCard({
-
     required this.icon,
     required this.title,
     required this.description,
@@ -844,78 +821,6 @@ class _EmptyCollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-class _PlaceholderList {
-  const _PlaceholderList._();
-
-  static List<Widget> services() => _generatePlaceholders(_PlaceholderType.service);
-
-  static List<Widget> technicians() => _generatePlaceholders(_PlaceholderType.technician);
-
-  static List<Widget> _generatePlaceholders(_PlaceholderType type) {
-    final tiles = List<Widget>.generate(3, (index) {
-      return Padding(
-        padding: EdgeInsets.only(bottom: index == 2 ? 0 : 16),
-        child: _PlaceholderTile(type: type),
-      );
-    });
-
-    tiles.add(
-      const Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: _PlaceholderMessage(),
-      ),
-    );
-
-    return tiles;
-  }
-}
-
-enum _PlaceholderType { service, technician }
-
-class _PlaceholderTile extends StatelessWidget {
-  const _PlaceholderTile({required this.type});
-
-  final _PlaceholderType type;
-
-  @override
-  Widget build(BuildContext context) {
-    final leading = type == _PlaceholderType.service
-        ? ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Container(
-              width: 92,
-              height: 92,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFE9D9FF), Color(0xFFF8ECFF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.image_outlined,
-                color: Color(0xFF7F3DFF),
-                size: 36,
-              ),
-            ),
-          )
-        : Container(
-            width: 64,
-            height: 64,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFFEDE6FF),
-            ),
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.person_outline,
-              color: Color(0xFF7F3DFF),
-              size: 28,
-            ),
-          );
-
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -980,147 +885,6 @@ class _PlaceholderTile extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-                const SizedBox(height: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF7F3FF),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: const Text(
-                    'Gestiona tu catálogo desde el panel de administración.',
-                    style: TextStyle(
-                      color: Color(0xFF7F3DFF),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-                const _PlaceholderBar(width: 160),
-                const SizedBox(height: 8),
-                const _PlaceholderBar(width: double.infinity),
-                const SizedBox(height: 6),
-                const _PlaceholderBar(width: double.infinity),
-                const SizedBox(height: 12),
-                if (type == _PlaceholderType.service)
-                  Row(
-                    children: const [
-                      _PlaceholderChip(width: 64),
-                      SizedBox(width: 8),
-                      _PlaceholderChip(width: 72),
-                      SizedBox(width: 8),
-                      _PlaceholderChip(width: 54),
-                    ],
-                  )
-                else
-                  Row(
-                    children: const [
-                      Icon(Icons.star, color: Color(0xFFFFB74D), size: 20),
-                      SizedBox(width: 4),
-                      _PlaceholderBar(width: 72, height: 12),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F1FF),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: const Icon(
-                Icons.favorite_border,
-                color: Color(0xFF7F3DFF),
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PlaceholderBar extends StatelessWidget {
-  const _PlaceholderBar({required this.width, this.height = 14});
-
-  final double width;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEDE6FF),
-        borderRadius: BorderRadius.circular(12),
-      ),
-    );
-  }
-}
-
-class _PlaceholderChip extends StatelessWidget {
-  const _PlaceholderChip({required this.width});
-
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: 26,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1ECFF),
-        borderRadius: BorderRadius.circular(14),
-      ),
-    );
-  }
-}
-
-class _PlaceholderMessage extends StatelessWidget {
-  const _PlaceholderMessage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'Estamos preparando recomendaciones para ti.',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Mientras tanto, explora otras secciones o vuelve a intentarlo más tarde.',
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 13,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -1230,19 +994,23 @@ class _TechnicianTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.black12,
-            backgroundImage:
-                technician.avatarUrl != null ? NetworkImage(technician.avatarUrl!) : null,
-            child: technician.avatarUrl == null
-                ? Text(
-                    technician.displayName.isNotEmpty
-                        ? technician.displayName.characters.first.toUpperCase()
-                        : '?',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  )
-                : null,
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFF1ECFF), Color(0xFFE6D9FF)],
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.person_outline,
+              size: 30,
+              color: Color(0xFF7F3DFF),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
