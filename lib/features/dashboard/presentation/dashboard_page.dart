@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../application/catalog_providers.dart';
-import 'package:nailfinderstore/features/dashboard/data/models/service.dart';
-import 'package:nailfinderstore/features/dashboard/data/models/service_category.dart';
-import 'package:nailfinderstore/features/dashboard/data/models/technician.dart';
-
-class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends ConsumerState<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> {
   String _segment = 'services';
+
+  final List<ServiceCategory> _categories = const [
+    ServiceCategory('Manicure'),
+    ServiceCategory('Spa'),
+    ServiceCategory('Diseños 3D'),
+  ];
+
+  final List<Service> _services = const [];
+
+  final List<Technician> _technicians = const [];
 
   void _onSegmentChanged(String segment) {
     setState(() {
@@ -27,9 +30,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isServicesSelected = _segment == 'services';
-    final categoriesAsync = ref.watch(serviceCategoriesProvider);
-    final servicesAsync = ref.watch(servicesProvider);
-    final techniciansAsync = ref.watch(techniciansProvider);
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F3FF),
@@ -37,7 +38,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
-            _HeaderBar(onNotificationsPressed: () {}),
+            _HeaderBar(
+              onNotificationsPressed: () {},
+              onProfilePressed: () => context.push('/profile'),
+            ),
             const SizedBox(height: 16),
             _NextReservationCard(),
             const SizedBox(height: 24),
@@ -76,11 +80,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               onChanged: _onSegmentChanged,
             ),
             const SizedBox(height: 20),
+
+            if (isServicesSelected && _categories.isNotEmpty) ...[
+              _CategoriesChips(categories: _categories),
+              const SizedBox(height: 20),
+            ],
             ..._buildSegmentContent(
               isServicesSelected: isServicesSelected,
-              categoriesAsync: categoriesAsync,
-              servicesAsync: servicesAsync,
-              techniciansAsync: techniciansAsync,
+
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -115,76 +122,45 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     );
   }
 
-  List<Widget> _buildSegmentContent({
-    required bool isServicesSelected,
-    required AsyncValue<List<ServiceCategory>> categoriesAsync,
-    required AsyncValue<List<Service>> servicesAsync,
-    required AsyncValue<List<Technician>> techniciansAsync,
-  }) {
+
+  List<Widget> _buildSegmentContent({required bool isServicesSelected}) {
     if (isServicesSelected) {
+      if (_services.isEmpty) {
+        return const [_EmptyCatalogSection.services()];
+      }
+
       return [
-        categoriesAsync.when(
-          data: (categories) {
-            if (categories.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _CategoriesChips(categories: categories),
-                const SizedBox(height: 20),
-              ],
-            );
-          },
-          loading: () => const SizedBox.shrink(),
-          error: (_, __) => const SizedBox.shrink(),
-        ),
-        servicesAsync.when(
-          data: (services) {
-            if (services.isEmpty) {
-              return const _EmptyCatalogSection.services();
-            }
-            return Column(
-              children: [
-                for (var i = 0; i < services.length; i++) ...[
-                  if (i > 0) const SizedBox(height: 12),
-                  _ServiceTile(service: services[i]),
-                ],
-              ],
-            );
-          },
-          loading: () => const _CatalogLoadingIndicator(),
-          error: (error, _) => _CatalogErrorMessage(error: error),
-        ),
+        for (var index = 0; index < _services.length; index++)
+          Padding(
+            padding: EdgeInsets.only(bottom: index == _services.length - 1 ? 0 : 16),
+            child: _ServiceTile(service: _services[index]),
+          ),
       ];
     }
 
+    if (_technicians.isEmpty) {
+      return const [_EmptyCatalogSection.technicians()];
+    }
+
     return [
-      techniciansAsync.when(
-        data: (technicians) {
-          if (technicians.isEmpty) {
-            return const _EmptyCatalogSection.technicians();
-          }
-          return Column(
-            children: [
-              for (var i = 0; i < technicians.length; i++) ...[
-                if (i > 0) const SizedBox(height: 12),
-                _TechnicianTile(technician: technicians[i]),
-              ],
-            ],
-          );
-        },
-        loading: () => const _CatalogLoadingIndicator(),
-        error: (error, _) => _CatalogErrorMessage(error: error),
-      ),
+      for (var index = 0; index < _technicians.length; index++)
+        Padding(
+          padding: EdgeInsets.only(bottom: index == _technicians.length - 1 ? 0 : 16),
+          child: _TechnicianTile(technician: _technicians[index]),
+        ),
+
     ];
   }
 }
 
 class _HeaderBar extends StatelessWidget {
-  const _HeaderBar({required this.onNotificationsPressed});
+  const _HeaderBar({
+    required this.onNotificationsPressed,
+    required this.onProfilePressed,
+  });
 
   final VoidCallback onNotificationsPressed;
+  final VoidCallback onProfilePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -212,8 +188,8 @@ class _HeaderBar extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             _CircleIconButton(
-              icon: Icons.favorite_border,
-              onPressed: () {},
+              icon: Icons.person_outline,
+              onPressed: onProfilePressed,
             ),
             const SizedBox(width: 12),
             _CircleIconButton(
@@ -669,15 +645,7 @@ class _EmptyCatalogSection extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 18),
-        _EmptyCollectionCard(
-          icon: isServices ? Icons.spa_outlined : Icons.people_alt_outlined,
-          title: title,
-          description: description,
-          footer: footer,
-        ),
-        const SizedBox(height: 18),
+
         _EmptyHighlightsList(highlights: highlights),
       ],
     );
@@ -863,74 +831,6 @@ class _EmptyCollectionCard extends StatelessWidget {
   }
 }
 
-class _CatalogLoadingIndicator extends StatelessWidget {
-  const _CatalogLoadingIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-}
-
-class _CatalogErrorMessage extends StatelessWidget {
-  const _CatalogErrorMessage({required this.error});
-
-  final Object error;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5DBFF)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.error_outline, color: Color(0xFF7F3DFF), size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ocurrió un error al cargar la información.',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$error',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 class _ServiceTile extends StatelessWidget {
@@ -1129,6 +1029,7 @@ class _TechnicianTile extends StatelessWidget {
     );
   }
 }
+
 
 String _formatCurrency(double value) {
   if (value >= 1000) {
