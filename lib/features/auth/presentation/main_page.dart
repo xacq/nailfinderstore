@@ -11,11 +11,11 @@ class MainPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // Fondo
-          //Image.asset(
-            //'assets/ui/main_bg.jpg', // cambia a .png si corresponde
-            //fit: BoxFit.cover,
-            //errorBuilder: (_, __, ___) => Container(color: Colors.white),
-          //),
+          Image.asset(
+            'assets/ui/main_bg.png',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(color: Colors.white),
+          ),
 
           // Gradiente para contraste
           Container(
