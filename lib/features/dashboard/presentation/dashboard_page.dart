@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../application/catalog_providers.dart';
-import '../data/models/service.dart';
-import '../data/models/service_category.dart';
-import '../data/models/technician.dart';
+import 'package:nailfinderstore/features/dashboard/data/models/service.dart';
+import 'package:nailfinderstore/features/dashboard/data/models/service_category.dart';
+import 'package:nailfinderstore/features/dashboard/data/models/technician.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
