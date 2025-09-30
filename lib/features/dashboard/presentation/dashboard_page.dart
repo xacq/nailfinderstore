@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../application/catalog_providers.dart';
-import '../data/models/service.dart';
-import '../data/models/service_category.dart';
-import '../data/models/technician.dart';
-
-class DashboardPage extends ConsumerStatefulWidget {
-  const DashboardPage({super.key});
+const DashboardPage({super.key});
 
   @override
   ConsumerState<DashboardPage> createState() => _DashboardPageState();
@@ -30,6 +24,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final categoriesAsync = ref.watch(serviceCategoriesProvider);
     final servicesAsync = ref.watch(servicesProvider);
     final techniciansAsync = ref.watch(techniciansProvider);
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F3FF),
@@ -79,11 +74,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               onChanged: _onSegmentChanged,
             ),
             const SizedBox(height: 20),
+
             ..._buildSegmentContent(
               isServicesSelected: isServicesSelected,
               categoriesAsync: categoriesAsync,
               servicesAsync: servicesAsync,
               techniciansAsync: techniciansAsync,
+
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -117,6 +114,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       ),
     );
   }
+
 
   List<Widget> _buildSegmentContent({
     required bool isServicesSelected,
@@ -676,15 +674,7 @@ class _EmptyCatalogSection extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 18),
-        _EmptyCollectionCard(
-          icon: isServices ? Icons.spa_outlined : Icons.people_alt_outlined,
-          title: title,
-          description: description,
-          footer: footer,
-        ),
-        const SizedBox(height: 18),
+
         _EmptyHighlightsList(highlights: highlights),
       ],
     );
@@ -1136,6 +1126,7 @@ class _TechnicianTile extends StatelessWidget {
     );
   }
 }
+
 
 String _formatCurrency(double value) {
   if (value >= 1000) {
