@@ -7,6 +7,15 @@ import '../data/models/service.dart';
 import '../data/models/service_category.dart';
 import '../data/models/technician.dart';
 
+const _darkColor = Color(0xFF070008);
+const _accentColor = Color(0xFFFF47F0);
+const _accentColorLight = Color(0xFFFF87F4);
+const _accentColorLighter = Color(0xFFFDA0F7);
+const _backgroundColor = Color(0xFFFCE9FD);
+const _cardTintColor = Color(0xFFFBC5FA);
+const _secondaryAccent = Color(0xFFE4B082);
+const _highlightYellow = Color(0xFFFFD700);
+
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
@@ -33,7 +42,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3FF),
+      backgroundColor: _backgroundColor,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -49,7 +58,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               onPressed: () => context.push('/model-preview'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.black,
+                backgroundColor: _darkColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -71,7 +80,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               'Mejor valorados',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
+                color: _darkColor,
               ),
             ),
             const SizedBox(height: 16),
@@ -92,8 +101,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F3DFF),
-                foregroundColor: Colors.white,
+                backgroundColor: _accentColor,
+                foregroundColor: _darkColor,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32),
@@ -247,7 +256,7 @@ class _CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: _cardTintColor,
       shape: const CircleBorder(),
       elevation: 2,
       child: InkWell(
@@ -256,7 +265,7 @@ class _CircleIconButton extends StatelessWidget {
         child: SizedBox(
           width: 42,
           height: 42,
-          child: Icon(icon, color: Colors.black87, size: 22),
+          child: Icon(icon, color: _darkColor, size: 22),
         ),
       ),
     );
@@ -270,13 +279,13 @@ class _NextReservationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _cardTintColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: _accentColorLight.withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -287,7 +296,11 @@ class _NextReservationCard extends StatelessWidget {
             width: 66,
             height: 92,
             decoration: BoxDecoration(
-              color: const Color(0xFF5B1CFB),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [_accentColor, _accentColorLight],
+              ),
               borderRadius: BorderRadius.circular(18),
             ),
             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -319,18 +332,18 @@ class _NextReservationCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Próxima reserva',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                  ),
+                  ).copyWith(color: _darkColor),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Nail Finder Store',
                   style: TextStyle(
-                    color: Colors.grey.shade900,
+                    color: _darkColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -339,19 +352,19 @@ class _NextReservationCard extends StatelessWidget {
                 Text(
                   'Avenida Yucatán 69, Ciudad de México',
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: _darkColor.withOpacity(0.6),
                     fontSize: 13,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 18, color: Colors.black87),
+                    const Icon(Icons.access_time, size: 18, color: _darkColor),
                     const SizedBox(width: 6),
                     Text(
                       '05:30 PM',
                       style: TextStyle(
-                        color: Colors.grey.shade900,
+                        color: _darkColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -359,7 +372,7 @@ class _NextReservationCard extends StatelessWidget {
                     TextButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF5B1CFB),
+                        foregroundColor: _accentColor,
                       ),
                       child: const Text('Cómo llegar'),
                     ),
@@ -384,14 +397,14 @@ class _CoursesBanner extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFFFAE5D2), Color(0xFFE8D0F7)],
+          colors: [_secondaryAccent, _accentColorLight],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
+            color: _accentColor.withOpacity(0.2),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -407,7 +420,7 @@ class _CoursesBanner extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF7F3DFF), Color(0xFFB892FF)],
+                  colors: [_accentColor, _accentColorLight],
                 ),
               ),
               alignment: Alignment.center,
@@ -428,29 +441,28 @@ class _CoursesBanner extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Cursos',
-                  style: TextStyle(
-                    color: Colors.black54,
+                  style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                  ),
+                  ).copyWith(color: _accentColor),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   'Aprende o actualízate',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                  ),
+                  ).copyWith(color: _darkColor),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Descubre talleres y cursos para mejorar tus técnicas profesionales.',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black87,
+                    color: _darkColor.withOpacity(0.75),
                   ),
                 ),
               ],
@@ -475,9 +487,9 @@ class _SegmentedSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _cardTintColor,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.black, width: 1.2),
+        border: Border.all(color: _darkColor, width: 1.2),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
@@ -518,14 +530,14 @@ class _SegmentButton extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? Colors.black : Colors.transparent,
+            color: selected ? _darkColor : Colors.transparent,
             borderRadius: BorderRadius.circular(26),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? Colors.white : Colors.black,
+              color: selected ? Colors.white : _darkColor,
               fontWeight: FontWeight.w600,
               fontSize: 15,
             ),
@@ -555,7 +567,8 @@ class _CategoriesChips extends StatelessWidget {
           final category = categories[index];
           return Chip(
             label: Text(category.name),
-            backgroundColor: const Color(0xFFF1ECFF),
+            backgroundColor: _accentColorLighter,
+            labelStyle: const TextStyle(color: _darkColor, fontWeight: FontWeight.w500),
           );
         },
       ),
@@ -571,8 +584,6 @@ class _EmptyCatalogSection extends StatelessWidget {
       : type = _CatalogEmptyType.technicians;
 
   final _CatalogEmptyType type;
-
-  Color get _accentColor => const Color(0xFF7F3DFF);
 
   @override
   Widget build(BuildContext context) {
@@ -601,10 +612,9 @@ class _EmptyCatalogSection extends StatelessWidget {
           ? 'Gestiona tu catálogo desde el panel de administración.'
           : 'Administra los perfiles desde el panel de administración.',
       style: const TextStyle(
-        color: Color(0xFF7F3DFF),
         fontWeight: FontWeight.w600,
         fontSize: 12,
-      ),
+      ).copyWith(color: _accentColor),
     );
 
     final highlights = isServices
@@ -663,19 +673,19 @@ class _EmptyCatalogSection extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.black,
+                foregroundColor: _darkColor,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                side: const BorderSide(color: Colors.black87, width: 1.1),
+                side: const BorderSide(color: _darkColor, width: 1.1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              icon: Icon(secondaryActionIcon, color: Colors.black87),
+              icon: Icon(secondaryActionIcon, color: _darkColor),
               label: Text(
                 secondaryActionLabel,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                  color: _darkColor,
                 ),
               ),
             ),
@@ -730,13 +740,13 @@ class _EmptyHighlightTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5DBFF)),
+        border: Border.all(color: _accentColorLighter),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
+            color: _accentColorLight.withOpacity(0.15),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -747,13 +757,13 @@ class _EmptyHighlightTile extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Color(0xFFF1ECFF),
+              color: _accentColorLighter,
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(10),
             child: Icon(
               highlight.icon,
-              color: const Color(0xFF7F3DFF),
+              color: _accentColor,
               size: 22,
             ),
           ),
@@ -766,14 +776,14 @@ class _EmptyHighlightTile extends StatelessWidget {
                   highlight.title,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                    color: _darkColor,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   highlight.description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.black87,
+                    color: _darkColor.withOpacity(0.8),
                     height: 1.35,
                   ),
                 ),
@@ -804,12 +814,12 @@ class _EmptyCollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: _accentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -822,13 +832,13 @@ class _EmptyCollectionCard extends StatelessWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1ECFF),
+              color: _accentColorLighter,
               borderRadius: BorderRadius.circular(18),
             ),
             alignment: Alignment.center,
             child: Icon(
               icon,
-              color: const Color(0xFF7F3DFF),
+              color: _accentColor,
               size: 28,
             ),
           ),
@@ -842,14 +852,14 @@ class _EmptyCollectionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                  ),
+                  ).copyWith(color: _darkColor),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black87,
+                    color: _darkColor.withOpacity(0.8),
                     height: 1.4,
                   ),
                 ),
@@ -891,13 +901,13 @@ class _CatalogErrorMessage extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5DBFF)),
+        border: Border.all(color: _accentColorLighter),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: _accentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -906,7 +916,7 @@ class _CatalogErrorMessage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFF7F3DFF), size: 24),
+          const Icon(Icons.error_outline, color: _accentColor, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -916,14 +926,14 @@ class _CatalogErrorMessage extends StatelessWidget {
                   'Ocurrió un error al cargar la información.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: _darkColor,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '$error',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.black54,
+                    color: _darkColor.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -949,12 +959,12 @@ class _ServiceTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: _accentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -971,17 +981,18 @@ class _ServiceTile extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                  ),
+                  ).copyWith(color: _darkColor),
                 ),
               ),
               if (service.durationMinutes != null)
                 Row(
                   children: [
-                    const Icon(Icons.schedule, size: 18, color: Colors.black54),
+                    const Icon(Icons.schedule, size: 18, color: _darkColor),
                     const SizedBox(width: 4),
                     Text(
                       '${service.durationMinutes} min',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600)
+                          .copyWith(color: _darkColor),
                     ),
                   ],
                 ),
@@ -991,21 +1002,22 @@ class _ServiceTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               description!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 height: 1.4,
-                color: Colors.black87,
+                color: _darkColor.withOpacity(0.8),
               ),
             ),
           ],
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.shopping_bag_outlined, size: 20, color: Colors.black87),
+              const Icon(Icons.shopping_bag_outlined, size: 20, color: _darkColor),
               const SizedBox(width: 6),
               Text(
                 price != null ? _formatCurrency(price) : 'Precio según consulta',
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(fontWeight: FontWeight.w600)
+                    .copyWith(color: _darkColor),
               ),
             ],
           ),
@@ -1026,12 +1038,12 @@ class _TechnicianTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: _accentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -1047,7 +1059,7 @@ class _TechnicianTile extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFFF1ECFF), Color(0xFFE6D9FF)],
+                colors: [_accentColorLighter, _accentColorLight],
               ),
               borderRadius: BorderRadius.circular(24),
             ),
@@ -1055,7 +1067,7 @@ class _TechnicianTile extends StatelessWidget {
             child: const Icon(
               Icons.person_outline,
               size: 30,
-              color: Color(0xFF7F3DFF),
+              color: _accentColor,
             ),
           ),
           const SizedBox(width: 16),
@@ -1071,23 +1083,26 @@ class _TechnicianTile extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                        ),
+                        ).copyWith(color: _darkColor),
                       ),
                     ),
                     if (technician.rating != null)
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Color(0xFFFFC107), size: 20),
+                          const Icon(Icons.star, color: _highlightYellow, size: 20),
                           const SizedBox(width: 4),
                           Text(
                             technician.rating!.toStringAsFixed(1),
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontWeight: FontWeight.w600)
+                                .copyWith(color: _darkColor),
                           ),
                           if (technician.reviewsCount != null) ...[
                             const SizedBox(width: 6),
                             Text(
                               '(${technician.reviewsCount})',
-                              style: const TextStyle(color: Colors.black54),
+                              style: TextStyle(
+                                color: _darkColor.withOpacity(0.7),
+                              ),
                             ),
                           ],
                         ],
@@ -1098,10 +1113,10 @@ class _TechnicianTile extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     technician.bio!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Colors.black87,
+                      color: _darkColor.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -1114,12 +1129,14 @@ class _TechnicianTile extends StatelessWidget {
                       for (final service in services.take(3))
                         Chip(
                           label: Text(service.name),
-                          backgroundColor: const Color(0xFFF1ECFF),
+                          backgroundColor: _accentColorLighter,
+                          labelStyle: const TextStyle(color: _darkColor),
                         ),
                       if (services.length > 3)
                         Chip(
                           label: Text('+${services.length - 3} más'),
-                          backgroundColor: const Color(0xFFE8D0F7),
+                          backgroundColor: _accentColorLight,
+                          labelStyle: const TextStyle(color: _darkColor),
                         ),
                     ],
                   ),
