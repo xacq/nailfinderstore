@@ -126,9 +126,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       return servicesAsync.when(
         data: (services) {
           if (services.isEmpty) {
+
             return const [
-              _EmptyCatalogSection.services(),
             ];
+            return _PlaceholderList.services();
+
           }
 
           return [
@@ -153,9 +155,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return techniciansAsync.when(
       data: (technicians) {
         if (technicians.isEmpty) {
+
           return const [
-            _EmptyCatalogSection.technicians(),
+
           ];
+
+          return _PlaceholderList.technicians();
+
         }
 
         return [
@@ -703,6 +709,7 @@ enum _CatalogEmptyType { services, technicians }
 
 class _EmptyHighlight {
   const _EmptyHighlight({
+
     required this.icon,
     required this.title,
     required this.description,
@@ -711,7 +718,6 @@ class _EmptyHighlight {
   final IconData icon;
   final String title;
   final String description;
-}
 
 class _EmptyHighlightsList extends StatelessWidget {
   const _EmptyHighlightsList({required this.highlights});
@@ -814,6 +820,7 @@ class _EmptyCollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -826,6 +833,7 @@ class _EmptyCollectionCard extends StatelessWidget {
           ),
         ],
       ),
+
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -844,11 +852,13 @@ class _EmptyCollectionCard extends StatelessWidget {
               size: 28,
             ),
           ),
+
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Text(
                   title,
                   style: const TextStyle(
@@ -865,6 +875,7 @@ class _EmptyCollectionCard extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
+
                 if (footer != null) ...[
                   const SizedBox(height: 12),
                   footer!,
