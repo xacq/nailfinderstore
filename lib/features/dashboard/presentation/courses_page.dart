@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+const _darkColor = Color(0xFF070008);
+const _accentColor = Color(0xFFFF47F0);
+const _accentColorLight = Color(0xFFFF87F4);
+const _backgroundColor = Color(0xFFFCE9FD);
+const _cardTintColor = Color(0xFFFBC5FA);
+
 class CoursesPage extends StatelessWidget {
   const CoursesPage({super.key});
 
@@ -29,23 +35,84 @@ class CoursesPage extends StatelessWidget {
       ),
     ];
 
+    final previewImages = const [
+      'https://images.pexels.com/photos/4543110/pexels-photo-4543110.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/5240653/pexels-photo-5240653.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/8101187/pexels-photo-8101187.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/7567944/pexels-photo-7567944.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+    ];
+
+    final theme = Theme.of(context);
+    final coursesChildCount = courses.isEmpty ? 0 : courses.length * 2 - 1;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F3FF),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: const Text(
-          'Cursos',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+      backgroundColor: _backgroundColor,
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _CoursesHeaderBar(
+                      onBackPressed: () => Navigator.of(context).maybePop(),
+                    ),
+                    const SizedBox(height: 20),
+                    const _NextReservationCard(),
+                    const SizedBox(height: 28),
+                    Text(
+                      'Prueba tu modelo',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: _darkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      height: 102,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: previewImages.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        itemBuilder: (_, index) => _ModelPreviewThumbnail(
+                          imageUrl: previewImages[index],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      'Mejor valorados',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: _darkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    const _CoursesSegmentedControl(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index.isOdd) {
+                      return const SizedBox(height: 16);
+                    }
+                    final courseIndex = index ~/ 2;
+                    return _CourseTile(item: courses[courseIndex]);
+                  },
+                  childCount: coursesChildCount,
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-        itemCount: courses.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
-        itemBuilder: (_, index) => _CourseTile(item: courses[index]),
       ),
     );
   }
@@ -81,11 +148,15 @@ class _CourseTile extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Image.asset(
-                'assets/ui/course_placeholder.png',
+              errorBuilder: (_, __, ___) => Container(
                 width: 80,
                 height: 80,
-                fit: BoxFit.cover,
+                color: _cardTintColor,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.image_not_supported_outlined,
+                  color: _darkColor,
+                ),
               ),
             ),
           ),
@@ -148,4 +219,269 @@ class _CourseItem {
   final String price;
   final String description;
   final String imageUrl;
+}
+
+class _ModelPreviewThumbnail extends StatelessWidget {
+  const _ModelPreviewThumbnail({required this.imageUrl});
+
+  final String imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: _cardTintColor,
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.image_outlined,
+              color: _darkColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CoursesHeaderBar extends StatelessWidget {
+  const _CoursesHeaderBar({required this.onBackPressed});
+
+  final VoidCallback onBackPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            _CircleIconButton(
+              icon: Icons.arrow_back_ios_new_rounded,
+              onPressed: onBackPressed,
+            ),
+            const SizedBox(width: 12),
+            _CircleIconButton(
+              icon: Icons.qr_code_2_rounded,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            _CircleIconButton(
+              icon: Icons.share_outlined,
+              onPressed: () {},
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            _CircleIconButton(
+              icon: Icons.notifications_none_rounded,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            _CircleIconButton(
+              icon: Icons.person_outline,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            _CircleIconButton(
+              icon: Icons.shopping_bag_outlined,
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CircleIconButton extends StatelessWidget {
+  const _CircleIconButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: _cardTintColor,
+      shape: const CircleBorder(),
+      elevation: 2,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onPressed,
+        child: SizedBox(
+          width: 42,
+          height: 42,
+          child: Icon(icon, color: _darkColor, size: 22),
+        ),
+      ),
+    );
+  }
+}
+
+class _NextReservationCard extends StatelessWidget {
+  const _NextReservationCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardTintColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: _accentColorLight.withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Container(
+            width: 66,
+            height: 92,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [_accentColor, _accentColorLight],
+              ),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text(
+                  '15',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'DIC',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Próxima reserva',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ).copyWith(color: _darkColor),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Nail Finder Store',
+                  style: TextStyle(
+                    color: _darkColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Avenida Yucatán 69, Ciudad de México',
+                  style: TextStyle(
+                    color: _darkColor.withOpacity(0.6),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(Icons.access_time, size: 18, color: _darkColor),
+                    const SizedBox(width: 6),
+                    const Text(
+                      '05:30 PM',
+                      style: TextStyle(
+                        color: _darkColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        foregroundColor: _accentColor,
+                      ),
+                      child: const Text('Cómo llegar'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CoursesSegmentedControl extends StatelessWidget {
+  const _CoursesSegmentedControl();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardTintColor.withOpacity(0.65),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: _darkColor, width: 1.2),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            decoration: BoxDecoration(
+              color: _darkColor,
+              borderRadius: BorderRadius.circular(26),
+            ),
+            child: const Text(
+              'Cursos',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Text(
+              'Talleres',
+              style: TextStyle(
+                color: _darkColor.withOpacity(0.6),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
