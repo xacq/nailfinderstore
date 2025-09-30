@@ -11,8 +11,8 @@ const _darkColor = Color(0xFF070008);
 const _accentColor = Color(0xFFFF47F0);
 const _accentColorLight = Color(0xFFFF87F4);
 const _accentColorLighter = Color(0xFFFDA0F7);
-const _backgroundColor = Color(0xFFFCE9FD);
-const _cardTintColor = Color(0xFFFBC5FA);
+const _backgroundColor = Color(0xFFFFFFFF);
+const _cardTintColor = Color(0xFFD9BED9);
 const _secondaryAccent = Color(0xFFE4B082);
 const _highlightYellow = Color(0xFFFFD700);
 

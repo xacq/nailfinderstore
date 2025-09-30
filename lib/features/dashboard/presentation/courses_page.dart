@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const _darkColor = Color(0xFF070008);
 const _accentColor = Color(0xFFFF47F0);
 const _accentColorLight = Color(0xFFFF87F4);
-const _backgroundColor = Color(0xFFFCE9FD);
+const _backgroundColor = Color(0xFFFDFDFD);
 const _cardTintColor = Color(0xFFFBC5FA);
 
 class CoursesPage extends StatelessWidget {
@@ -89,9 +89,6 @@ class CoursesPage extends StatelessWidget {
                         color: _darkColor,
                       ),
                     ),
-                    const SizedBox(height: 18),
-                    const _CoursesSegmentedControl(),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -432,52 +429,6 @@ class _NextReservationCard extends StatelessWidget {
                   ],
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CoursesSegmentedControl extends StatelessWidget {
-  const _CoursesSegmentedControl();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: _cardTintColor.withOpacity(0.65),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: _darkColor, width: 1.2),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-            decoration: BoxDecoration(
-              color: _darkColor,
-              borderRadius: BorderRadius.circular(26),
-            ),
-            child: const Text(
-              'Cursos',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            child: Text(
-              'Talleres',
-              style: TextStyle(
-                color: _darkColor.withOpacity(0.6),
-                fontWeight: FontWeight.w600,
-              ),
             ),
           ),
         ],
