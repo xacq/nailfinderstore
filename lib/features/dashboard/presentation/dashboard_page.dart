@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../application/catalog_providers.dart';
-import '../data/models/service_category.dart';
-import '../data/models/service.dart';
-import '../data/models/technician.dart';
 
-class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends ConsumerState<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> {
   String _segment = 'services';
+
+  final List<ServiceCategory> _categories = const [
+    ServiceCategory('Manicure'),
+    ServiceCategory('Spa'),
+    ServiceCategory('Diseños 3D'),
+  ];
+
+  final List<Service> _services = const [];
+
+  final List<Technician> _technicians = const [];
 
   void _onSegmentChanged(String segment) {
     setState(() {
@@ -26,9 +30,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final servicesAsync = ref.watch(servicesProvider);
-    final techniciansAsync = ref.watch(techniciansProvider);
-    final categoriesAsync = ref.watch(serviceCategoriesProvider);
     final isServicesSelected = _segment == 'services';
 
     return Scaffold(
@@ -76,13 +77,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               onChanged: _onSegmentChanged,
             ),
             const SizedBox(height: 20),
-            if (isServicesSelected)
-              _CategoriesChips(categoriesAsync: categoriesAsync),
-            if (isServicesSelected) const SizedBox(height: 20),
+            if (isServicesSelected && _categories.isNotEmpty) ...[
+              _CategoriesChips(categories: _categories),
+              const SizedBox(height: 20),
+            ],
             ..._buildSegmentContent(
               isServicesSelected: isServicesSelected,
-              servicesAsync: servicesAsync,
-              techniciansAsync: techniciansAsync,
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -117,71 +117,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     );
   }
 
-  List<Widget> _buildSegmentContent({
-    required bool isServicesSelected,
-    required AsyncValue<List<Service>> servicesAsync,
-    required AsyncValue<List<Technician>> techniciansAsync,
-  }) {
+  List<Widget> _buildSegmentContent({required bool isServicesSelected}) {
     if (isServicesSelected) {
-      return servicesAsync.when(
-        data: (services) {
-          if (services.isEmpty) {
 
-            return const [
-            ];
-            return _PlaceholderList.services();
-
-          }
-
-          return [
-            for (final (index, service) in services.indexed)
-              Padding(
-                padding: EdgeInsets.only(bottom: index == services.length - 1 ? 0 : 16),
-                child: _ServiceTile(service: service),
-              ),
-          ];
-        },
-        error: (error, __) => [
-          _ErrorState(
-            message: error.toString(),
           ),
-        ],
-        loading: () => const [
-          _LoadingState(),
-        ],
-      );
+      ];
     }
 
-    return techniciansAsync.when(
-      data: (technicians) {
-        if (technicians.isEmpty) {
 
-          return const [
-
-          ];
-
-          return _PlaceholderList.technicians();
-
-        }
-
-        return [
-          for (final (index, technician) in technicians.indexed)
-            Padding(
-              padding:
-                  EdgeInsets.only(bottom: index == technicians.length - 1 ? 0 : 16),
-              child: _TechnicianTile(technician: technician),
-            ),
-        ];
-      },
-      error: (error, __) => [
-        _ErrorState(
-          message: error.toString(),
         ),
-      ],
-      loading: () => const [
-        _LoadingState(),
-      ],
-    );
+    ];
   }
 }
 
@@ -530,45 +475,28 @@ class _SegmentButton extends StatelessWidget {
 }
 
 class _CategoriesChips extends StatelessWidget {
-  const _CategoriesChips({required this.categoriesAsync});
+  const _CategoriesChips({required this.categories});
 
-  final AsyncValue<List<ServiceCategory>> categoriesAsync;
+  final List<ServiceCategory> categories;
 
   @override
   Widget build(BuildContext context) {
-    return categoriesAsync.when(
-      data: (categories) {
-        if (categories.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return SizedBox(
-          height: 40,
-          child: ListView.separated(
-            padding: EdgeInsets.zero,
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return Chip(
-                label: Text(category.name),
-                backgroundColor: const Color(0xFFF1ECFF),
-              );
-            },
-          ),
-        );
-      },
-      loading: () => const Align(
-        alignment: Alignment.centerLeft,
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(strokeWidth: 2.5),
-        ),
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return Chip(
+            label: Text(category.name),
+            backgroundColor: const Color(0xFFF1ECFF),
+          );
+        },
       ),
-      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
@@ -709,7 +637,6 @@ enum _CatalogEmptyType { services, technicians }
 
 class _EmptyHighlight {
   const _EmptyHighlight({
-
     required this.icon,
     required this.title,
     required this.description,
@@ -718,6 +645,7 @@ class _EmptyHighlight {
   final IconData icon;
   final String title;
   final String description;
+}
 
 class _EmptyHighlightsList extends StatelessWidget {
   const _EmptyHighlightsList({required this.highlights});
@@ -820,7 +748,6 @@ class _EmptyCollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -833,7 +760,6 @@ class _EmptyCollectionCard extends StatelessWidget {
           ),
         ],
       ),
-
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -852,13 +778,11 @@ class _EmptyCollectionCard extends StatelessWidget {
               size: 28,
             ),
           ),
-
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   title,
                   style: const TextStyle(
@@ -875,7 +799,6 @@ class _EmptyCollectionCard extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-
                 if (footer != null) ...[
                   const SizedBox(height: 12),
                   footer!,
@@ -888,6 +811,7 @@ class _EmptyCollectionCard extends StatelessWidget {
     );
   }
 }
+
 
 
 class _ServiceTile extends StatelessWidget {
@@ -1087,106 +1011,40 @@ class _TechnicianTile extends StatelessWidget {
   }
 }
 
-class _LoadingState extends StatelessWidget {
-  const _LoadingState();
+class ServiceCategory {
+  const ServiceCategory(this.name);
 
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 32),
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
+  final String name;
 }
 
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final displayMessage = message.isEmpty ? 'Error al cargar la información.' : message;
-
-    return _StateContainer(
-      icon: Icons.warning_amber_rounded,
-      iconColor: Colors.amber.shade700,
-      title: 'Ups, algo salió mal',
-      description: displayMessage,
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return _StateContainer(
-      icon: Icons.search_off_rounded,
-      iconColor: Colors.deepPurple,
-      title: 'Sin resultados',
-      description: message,
-    );
-  }
-}
-
-class _StateContainer extends StatelessWidget {
-  const _StateContainer({
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.description,
+class Service {
+  const Service({
+    required this.name,
+    this.description,
+    this.durationMinutes,
+    this.price,
   });
 
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String description;
+  final String name;
+  final String? description;
+  final int? durationMinutes;
+  final double? price;
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 36, color: iconColor),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            description,
-            style: const TextStyle(fontSize: 13.5, color: Colors.black87, height: 1.4),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+class Technician {
+  const Technician({
+    required this.displayName,
+    this.rating,
+    this.reviewsCount,
+    this.bio,
+    this.services = const <Service>[],
+  });
+
+  final String displayName;
+  final double? rating;
+  final int? reviewsCount;
+  final String? bio;
+  final List<Service> services;
 }
 
 String _formatCurrency(double value) {
