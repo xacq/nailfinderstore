@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class DashboardPage extends StatefulWidget {
+
   const DashboardPage({super.key});
 
   @override
@@ -119,28 +119,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
   List<Widget> _buildSegmentContent({required bool isServicesSelected}) {
     if (isServicesSelected) {
-      if (_services.isEmpty) {
-        return const [_EmptyCatalogSection.services()];
-      }
 
-      return [
-        for (var index = 0; index < _services.length; index++)
-          Padding(
-            padding: EdgeInsets.only(bottom: index == _services.length - 1 ? 0 : 16),
-            child: _ServiceTile(service: _services[index]),
           ),
       ];
     }
 
-    if (_technicians.isEmpty) {
-      return const [_EmptyCatalogSection.technicians()];
-    }
 
-    return [
-      for (var index = 0; index < _technicians.length; index++)
-        Padding(
-          padding: EdgeInsets.only(bottom: index == _technicians.length - 1 ? 0 : 16),
-          child: _TechnicianTile(technician: _technicians[index]),
         ),
     ];
   }
@@ -827,6 +811,7 @@ class _EmptyCollectionCard extends StatelessWidget {
     );
   }
 }
+
 
 
 class _ServiceTile extends StatelessWidget {
