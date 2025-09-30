@@ -29,3 +29,11 @@ Este documento resume el estado del backend [`xacq/backend_nailfinderstore`](htt
 6. **Preparar autenticación**: aunque el backend aún no expone login, conviene dejar abstraída la capa de auth para integrar cuando exista un endpoint.
 
 Sin estos cambios el frontend seguirá mostrando datos simulados y no podrá conectarse al backend tal como está.
+
+
+## Implementación en el frontend
+
+- Se añadió una capa de red reutilizable con `Dio` y configuración de base URL mediante parámetros de compilación para apuntar al backend en distintos entornos.【F:lib/core/network/dio_provider.dart†L1-L33】【F:lib/core/network/backend_config.dart†L1-L8】
+- Se modelaron categorías, servicios y técnicos junto con un repositorio que encapsula el acceso a los endpoints REST documentados.【F:lib/features/dashboard/data/models/service_category.dart†L1-L17】【F:lib/features/dashboard/data/models/service.dart†L1-L35】【F:lib/features/dashboard/data/models/technician.dart†L1-L38】【F:lib/features/dashboard/data/repositories/catalog_repository.dart†L1-L29】
+- El dashboard ahora consume estos providers de Riverpod para poblar listados dinámicos, chips de categorías y estados de carga/error en lugar de utilizar datos quemados en memoria.【F:lib/features/dashboard/application/catalog_providers.dart†L1-L21】【F:lib/features/dashboard/presentation/dashboard_page.dart†L1-L800】
+
