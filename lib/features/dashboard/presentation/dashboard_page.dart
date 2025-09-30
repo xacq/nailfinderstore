@@ -85,21 +85,30 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               techniciansAsync: techniciansAsync,
             ),
             const SizedBox(height: 24),
-            OutlinedButton(
+            ElevatedButton(
               onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.black, width: 1.5),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7F3DFF),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(32),
                 ),
+                elevation: 2,
               ),
-              child: Text(
-                isServicesSelected
-                    ? 'Ver más servicios...'
-                    : 'Ver más técnicos...',
-                style: const TextStyle(fontWeight: FontWeight.w600),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    isServicesSelected
+                        ? 'Ver más servicios...'
+                        : 'Ver más técnicos...',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -117,11 +126,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       return servicesAsync.when(
         data: (services) {
           if (services.isEmpty) {
-            return const [
-              _EmptyState(
-                message: 'No encontramos datos para mostrar por el momento.',
-              ),
-            ];
+            return _PlaceholderList.services();
           }
 
           return [
@@ -146,11 +151,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return techniciansAsync.when(
       data: (technicians) {
         if (technicians.isEmpty) {
-          return const [
-            _EmptyState(
-              message: 'No encontramos datos para mostrar por el momento.',
-            ),
-          ];
+          return _PlaceholderList.technicians();
         }
 
         return [
@@ -541,6 +542,214 @@ class _CategoriesChips extends StatelessWidget {
         ),
       ),
       error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _PlaceholderList {
+  const _PlaceholderList._();
+
+  static List<Widget> services() => _generatePlaceholders(_PlaceholderType.service);
+
+  static List<Widget> technicians() => _generatePlaceholders(_PlaceholderType.technician);
+
+  static List<Widget> _generatePlaceholders(_PlaceholderType type) {
+    final tiles = List<Widget>.generate(3, (index) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: index == 2 ? 0 : 16),
+        child: _PlaceholderTile(type: type),
+      );
+    });
+
+    tiles.add(
+      const Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: _PlaceholderMessage(),
+      ),
+    );
+
+    return tiles;
+  }
+}
+
+enum _PlaceholderType { service, technician }
+
+class _PlaceholderTile extends StatelessWidget {
+  const _PlaceholderTile({required this.type});
+
+  final _PlaceholderType type;
+
+  @override
+  Widget build(BuildContext context) {
+    final leading = type == _PlaceholderType.service
+        ? ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Container(
+              width: 92,
+              height: 92,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE9D9FF), Color(0xFFF8ECFF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.image_outlined,
+                color: Color(0xFF7F3DFF),
+                size: 36,
+              ),
+            ),
+          )
+        : Container(
+            width: 64,
+            height: 64,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFFEDE6FF),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.person_outline,
+              color: Color(0xFF7F3DFF),
+              size: 28,
+            ),
+          );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          leading,
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _PlaceholderBar(width: 160),
+                const SizedBox(height: 8),
+                const _PlaceholderBar(width: double.infinity),
+                const SizedBox(height: 6),
+                const _PlaceholderBar(width: double.infinity),
+                const SizedBox(height: 12),
+                if (type == _PlaceholderType.service)
+                  Row(
+                    children: const [
+                      _PlaceholderChip(width: 64),
+                      SizedBox(width: 8),
+                      _PlaceholderChip(width: 72),
+                      SizedBox(width: 8),
+                      _PlaceholderChip(width: 54),
+                    ],
+                  )
+                else
+                  Row(
+                    children: const [
+                      Icon(Icons.star, color: Color(0xFFFFB74D), size: 20),
+                      SizedBox(width: 4),
+                      _PlaceholderBar(width: 72, height: 12),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F1FF),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Icon(
+                Icons.favorite_border,
+                color: Color(0xFF7F3DFF),
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlaceholderBar extends StatelessWidget {
+  const _PlaceholderBar({required this.width, this.height = 14});
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDE6FF),
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+}
+
+class _PlaceholderChip extends StatelessWidget {
+  const _PlaceholderChip({required this.width});
+
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: 26,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1ECFF),
+        borderRadius: BorderRadius.circular(14),
+      ),
+    );
+  }
+}
+
+class _PlaceholderMessage extends StatelessWidget {
+  const _PlaceholderMessage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Text(
+          'Estamos preparando recomendaciones para ti.',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Mientras tanto, explora otras secciones o vuelve a intentarlo más tarde.',
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 13,
+          ),
+        ),
+      ],
     );
   }
 }
