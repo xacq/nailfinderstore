@@ -11,21 +11,21 @@ class CoursesPage extends StatelessWidget {
         price: '300 MXN',
         description: 'Esmalte . Aprende la revolución en el mundo del polygel.',
         imageUrl:
-            'https://images.unsplash.com/photo-1616464918770-5b2d90d595b9?auto=format&fit=crop&w=400&q=80',
+            'https://images.pexels.com/photos/3065188/pexels-photo-3065188.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=400',
       ),
       _CourseItem(
         title: 'Taller de Nail Art',
         price: '350 MXN',
         description: 'Esmalte . Amplia variedad de colores, buena aplicación y diseño.',
         imageUrl:
-            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
+            'https://images.pexels.com/photos/3993445/pexels-photo-3993445.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=400',
       ),
       _CourseItem(
         title: 'Taller Esculpido',
         price: '320 MXN',
         description: 'Esmalte . Amplia variedad de colores, buena aplicación y resistencia.',
         imageUrl:
-            'https://images.unsplash.com/photo-1617039421892-3833b9c1390d?auto=format&fit=crop&w=400&q=80',
+            'https://images.pexels.com/photos/3997376/pexels-photo-3997376.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=400',
       ),
     ];
 
@@ -81,6 +81,12 @@ class _CourseTile extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Image.asset(
+                'assets/ui/course_placeholder.png',
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(width: 16),
