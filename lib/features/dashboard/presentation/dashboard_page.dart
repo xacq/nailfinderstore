@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
@@ -31,6 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isServicesSelected = _segment == 'services';
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F3FF),
@@ -80,12 +80,14 @@ class _DashboardPageState extends State<DashboardPage> {
               onChanged: _onSegmentChanged,
             ),
             const SizedBox(height: 20),
+
             if (isServicesSelected && _categories.isNotEmpty) ...[
               _CategoriesChips(categories: _categories),
               const SizedBox(height: 20),
             ],
             ..._buildSegmentContent(
               isServicesSelected: isServicesSelected,
+
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -120,6 +122,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+
   List<Widget> _buildSegmentContent({required bool isServicesSelected}) {
     if (isServicesSelected) {
       if (_services.isEmpty) {
@@ -145,6 +148,7 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: EdgeInsets.only(bottom: index == _technicians.length - 1 ? 0 : 16),
           child: _TechnicianTile(technician: _technicians[index]),
         ),
+
     ];
   }
 }
@@ -641,15 +645,7 @@ class _EmptyCatalogSection extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 18),
-        _EmptyCollectionCard(
-          icon: isServices ? Icons.spa_outlined : Icons.people_alt_outlined,
-          title: title,
-          description: description,
-          footer: footer,
-        ),
-        const SizedBox(height: 18),
+
         _EmptyHighlightsList(highlights: highlights),
       ],
     );
@@ -834,6 +830,7 @@ class _EmptyCollectionCard extends StatelessWidget {
     );
   }
 }
+
 
 
 class _ServiceTile extends StatelessWidget {
@@ -1033,41 +1030,6 @@ class _TechnicianTile extends StatelessWidget {
   }
 }
 
-class ServiceCategory {
-  const ServiceCategory(this.name);
-
-  final String name;
-}
-
-class Service {
-  const Service({
-    required this.name,
-    this.description,
-    this.durationMinutes,
-    this.price,
-  });
-
-  final String name;
-  final String? description;
-  final int? durationMinutes;
-  final double? price;
-}
-
-class Technician {
-  const Technician({
-    required this.displayName,
-    this.rating,
-    this.reviewsCount,
-    this.bio,
-    this.services = const <Service>[],
-  });
-
-  final String displayName;
-  final double? rating;
-  final int? reviewsCount;
-  final String? bio;
-  final List<Service> services;
-}
 
 String _formatCurrency(double value) {
   if (value >= 1000) {
