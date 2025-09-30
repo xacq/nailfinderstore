@@ -680,7 +680,7 @@ class _EmptyCatalogSection extends StatelessWidget {
               ),
             ),
           ],
-
+        ),
         _EmptyHighlightsList(highlights: highlights),
       ],
     );
