@@ -128,12 +128,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           if (services.isEmpty) {
 
             return const [
+
+              _EmptyCatalogSection.services(),
+
               _EmptyCollectionCard(
                 icon: Icons.spa_outlined,
                 title: 'Aún no hay servicios disponibles',
                 description:
                     'Publica tus servicios o sincroniza tu catálogo para mostrarlos aquí.',
               ),
+
             ];
             return _PlaceholderList.services();
 
@@ -163,12 +167,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         if (technicians.isEmpty) {
 
           return const [
+
+            _EmptyCatalogSection.technicians(),
+
             _EmptyCollectionCard(
               icon: Icons.people_alt_outlined,
               title: 'Todavía no hay técnicos visibles',
               description:
                   'Añade a tu equipo o invita colaboradores para que aparezcan en este listado.',
             ),
+
           ];
 
           return _PlaceholderList.technicians();
@@ -585,8 +593,146 @@ class _CategoriesChips extends StatelessWidget {
 }
 
 
+
+class _EmptyCatalogSection extends StatelessWidget {
+  const _EmptyCatalogSection.services()
+      : type = _CatalogEmptyType.services;
+  const _EmptyCatalogSection.technicians()
+      : type = _CatalogEmptyType.technicians;
+
+  final _CatalogEmptyType type;
+
+  Color get _accentColor => const Color(0xFF7F3DFF);
+
+  @override
+  Widget build(BuildContext context) {
+    final isServices = type == _CatalogEmptyType.services;
+    final theme = Theme.of(context);
+
+    final primaryActionLabel =
+        isServices ? 'Agregar servicio' : 'Invitar técnico';
+    final primaryActionIcon =
+        isServices ? Icons.add_circle_outline : Icons.person_add_alt_1_outlined;
+
+    final secondaryActionLabel =
+        isServices ? 'Importar catálogo' : 'Asignar servicios';
+    final secondaryActionIcon =
+        isServices ? Icons.cloud_upload_outlined : Icons.manage_accounts_outlined;
+
+    final title = isServices
+        ? 'Aún no hay servicios disponibles'
+        : 'Todavía no hay técnicos visibles';
+    final description = isServices
+        ? 'Publica tus servicios o sincroniza tu catálogo para mostrarlos aquí.'
+        : 'Añade a tu equipo o invita colaboradores para que aparezcan en este listado.';
+
+    final footer = Text(
+      isServices
+          ? 'Gestiona tu catálogo desde el panel de administración.'
+          : 'Administra los perfiles desde el panel de administración.',
+      style: const TextStyle(
+        color: Color(0xFF7F3DFF),
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
+    );
+
+    final highlights = isServices
+        ? const [
+            _EmptyHighlight(
+              icon: Icons.brush_outlined,
+              title: 'Destaca tus especialidades',
+              description:
+                  'Organiza tus servicios por categoría y duración para facilitar las reservas.',
+            ),
+            _EmptyHighlight(
+              icon: Icons.timer_outlined,
+              title: 'Define duraciones reales',
+              description:
+                  'Ajusta el tiempo estimado para que la agenda sugiera horarios disponibles.',
+            ),
+          ]
+        : const [
+            _EmptyHighlight(
+              icon: Icons.school_outlined,
+              title: 'Completa los perfiles',
+              description:
+                  'Incluye certificaciones y biografías para que los clientes confíen en tu equipo.',
+            ),
+            _EmptyHighlight(
+              icon: Icons.groups_outlined,
+              title: 'Asigna servicios compatibles',
+              description:
+                  'Relaciona a cada técnico con los servicios que puede atender antes de recibir reservas.',
+            ),
+          ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _accentColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              icon: Icon(primaryActionIcon),
+              label: Text(
+                primaryActionLabel,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                side: const BorderSide(color: Colors.black87, width: 1.1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              icon: Icon(secondaryActionIcon, color: Colors.black87),
+              label: Text(
+                secondaryActionLabel,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        _EmptyCollectionCard(
+          icon: isServices ? Icons.spa_outlined : Icons.people_alt_outlined,
+          title: title,
+          description: description,
+          footer: footer,
+        ),
+        const SizedBox(height: 18),
+        _EmptyHighlightsList(highlights: highlights),
+      ],
+    );
+  }
+}
+
+enum _CatalogEmptyType { services, technicians }
+
+class _EmptyHighlight {
+  const _EmptyHighlight({
+
 class _EmptyCollectionCard extends StatelessWidget {
   const _EmptyCollectionCard({
+
     required this.icon,
     required this.title,
     required this.description,
@@ -596,9 +742,108 @@ class _EmptyCollectionCard extends StatelessWidget {
   final String title;
   final String description;
 
+class _EmptyHighlightsList extends StatelessWidget {
+  const _EmptyHighlightsList({required this.highlights});
+
+  final List<_EmptyHighlight> highlights;
+
   @override
   Widget build(BuildContext context) {
-=======
+    return Column(
+      children: [
+        for (var i = 0; i < highlights.length; i++) ...[
+          if (i > 0) const SizedBox(height: 12),
+          _EmptyHighlightTile(highlight: highlights[i]),
+        ],
+      ],
+    );
+  }
+}
+
+class _EmptyHighlightTile extends StatelessWidget {
+  const _EmptyHighlightTile({required this.highlight});
+
+  final _EmptyHighlight highlight;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE5DBFF)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1ECFF),
+              shape: BoxShape.circle,
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Icon(
+              highlight.icon,
+              color: const Color(0xFF7F3DFF),
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  highlight.title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  highlight.description,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.black87,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class _EmptyCollectionCard extends StatelessWidget {
+  const _EmptyCollectionCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    this.footer,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final Widget? footer;
+
+  @override
+  Widget build(BuildContext context) {
+
 class _PlaceholderList {
   const _PlaceholderList._();
 
@@ -670,6 +915,7 @@ class _PlaceholderTile extends StatelessWidget {
             ),
           );
 
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -724,6 +970,20 @@ class _PlaceholderTile extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
+
+                if (footer != null) ...[
+                  const SizedBox(height: 12),
+                  footer!,
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
