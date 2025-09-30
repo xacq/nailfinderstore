@@ -1,79 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class DashboardPage extends StatefulWidget {
+import '../../application/catalog_providers.dart';
+import '../../data/models/service_category.dart';
+import '../../data/models/service.dart';
+import '../../data/models/technician.dart';
+
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  String _segment = 'stores';
-
-  final List<_StoreItem> _stores = const [
-    _StoreItem(
-      title: 'Tienditas',
-      subtitle:
-          'Manicura y pedicura profesional con manicuristas de alta calidad. ¡Luce impecable!',
-      rating: 4.8,
-      reviews: 248,
-      priceLabel: 'Desde 200 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1622286342621-4b56776c2beb?auto=format&fit=crop&w=400&q=80',
-    ),
-    _StoreItem(
-      title: 'Uñas para ti',
-      subtitle:
-          'Ambiente acogedor y familiar. Manicura clásica y uñas acrílicas personalizadas.',
-      rating: 4.9,
-      reviews: 186,
-      priceLabel: 'Desde 260 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1591076482161-42a42c9d72f8?auto=format&fit=crop&w=400&q=80',
-    ),
-    _StoreItem(
-      title: 'Mano bella',
-      subtitle:
-          'Manicure con las últimas tendencias. Tratamientos con productos veganos.',
-      rating: 4.7,
-      reviews: 312,
-      priceLabel: 'Desde 280 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1589411386958-36ce9a72788f?auto=format&fit=crop&w=400&q=80',
-    ),
-  ];
-
-  final List<_StoreItem> _products = const [
-    _StoreItem(
-      title: 'Kit Gel UV',
-      subtitle:
-          'Incluye lámpara UV, esmaltes y accesorios para 20 aplicaciones profesionales.',
-      rating: 4.6,
-      reviews: 129,
-      priceLabel: '1,050 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1580894899185-1e7c3f9a1f25?auto=format&fit=crop&w=400&q=80',
-    ),
-    _StoreItem(
-      title: 'Colección Nude',
-      subtitle: 'Set de 6 esmaltes en tonos neutros con fórmula hipoalergénica.',
-      rating: 4.8,
-      reviews: 204,
-      priceLabel: '720 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1580983561371-7e3e2d17cf2b?auto=format&fit=crop&w=400&q=80',
-    ),
-    _StoreItem(
-      title: 'Herramientas Pro',
-      subtitle: 'Kit completo de herramientas de acero quirúrgico para salón.',
-      rating: 4.9,
-      reviews: 168,
-      priceLabel: '1,320 MXN',
-      imageUrl:
-          'https://images.unsplash.com/photo-1610992015732-05475a30f89f?auto=format&fit=crop&w=400&q=80',
-    ),
-  ];
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  String _segment = 'services';
 
   void _onSegmentChanged(String segment) {
     setState(() {
@@ -84,7 +26,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final storesSelected = _segment == 'stores';
+    final servicesAsync = ref.watch(servicesProvider);
+    final techniciansAsync = ref.watch(techniciansProvider);
+    final categoriesAsync = ref.watch(serviceCategoriesProvider);
+    final isServicesSelected = _segment == 'services';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F3FF),
@@ -131,17 +76,13 @@ class _DashboardPageState extends State<DashboardPage> {
               onChanged: _onSegmentChanged,
             ),
             const SizedBox(height: 20),
-            ...List.generate(
-              (storesSelected ? _stores : _products).length,
-              (index) {
-                final items = storesSelected ? _stores : _products;
-                final item = items[index];
-                final isLast = index == items.length - 1;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
-                  child: _StoreTile(item: item),
-                );
-              },
+            if (isServicesSelected)
+              _CategoriesChips(categoriesAsync: categoriesAsync),
+            if (isServicesSelected) const SizedBox(height: 20),
+            ..._buildSegmentContent(
+              isServicesSelected: isServicesSelected,
+              servicesAsync: servicesAsync,
+              techniciansAsync: techniciansAsync,
             ),
             const SizedBox(height: 24),
             OutlinedButton(
@@ -155,13 +96,80 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               child: Text(
-                storesSelected ? 'Ver 231 tiendas más...' : 'Ver más productos...',
+                isServicesSelected
+                    ? 'Ver más servicios...'
+                    : 'Ver más técnicos...',
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildSegmentContent({
+    required bool isServicesSelected,
+    required AsyncValue<List<Service>> servicesAsync,
+    required AsyncValue<List<Technician>> techniciansAsync,
+  }) {
+    if (isServicesSelected) {
+      return servicesAsync.when(
+        data: (services) {
+          if (services.isEmpty) {
+            return const [
+              _EmptyState(
+                message: 'No encontramos datos para mostrar por el momento.',
+              ),
+            ];
+          }
+
+          return [
+            for (final (index, service) in services.indexed)
+              Padding(
+                padding: EdgeInsets.only(bottom: index == services.length - 1 ? 0 : 16),
+                child: _ServiceTile(service: service),
+              ),
+          ];
+        },
+        error: (error, __) => [
+          _ErrorState(
+            message: error.toString(),
+          ),
+        ],
+        loading: () => const [
+          _LoadingState(),
+        ],
+      );
+    }
+
+    return techniciansAsync.when(
+      data: (technicians) {
+        if (technicians.isEmpty) {
+          return const [
+            _EmptyState(
+              message: 'No encontramos datos para mostrar por el momento.',
+            ),
+          ];
+        }
+
+        return [
+          for (final (index, technician) in technicians.indexed)
+            Padding(
+              padding:
+                  EdgeInsets.only(bottom: index == technicians.length - 1 ? 0 : 16),
+              child: _TechnicianTile(technician: technician),
+            ),
+        ];
+      },
+      error: (error, __) => [
+        _ErrorState(
+          message: error.toString(),
+        ),
+      ],
+      loading: () => const [
+        _LoadingState(),
+      ],
     );
   }
 }
@@ -440,14 +448,14 @@ class _SegmentedSelector extends StatelessWidget {
       child: Row(
         children: [
           _SegmentButton(
-            label: 'Tiendas',
-            selected: selectedSegment == 'stores',
-            onTap: () => onChanged('stores'),
+            label: 'Servicios',
+            selected: selectedSegment == 'services',
+            onTap: () => onChanged('services'),
           ),
           _SegmentButton(
-            label: 'Productos',
-            selected: selectedSegment == 'products',
-            onTap: () => onChanged('products'),
+            label: 'Técnicos',
+            selected: selectedSegment == 'technicians',
+            onTap: () => onChanged('technicians'),
           ),
         ],
       ),
@@ -493,13 +501,138 @@ class _SegmentButton extends StatelessWidget {
   }
 }
 
-class _StoreTile extends StatelessWidget {
-  const _StoreTile({required this.item});
+class _CategoriesChips extends StatelessWidget {
+  const _CategoriesChips({required this.categoriesAsync});
 
-  final _StoreItem item;
+  final AsyncValue<List<ServiceCategory>> categoriesAsync;
 
   @override
   Widget build(BuildContext context) {
+    return categoriesAsync.when(
+      data: (categories) {
+        if (categories.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return SizedBox(
+          height: 40,
+          child: ListView.separated(
+            padding: EdgeInsets.zero,
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: categories.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              return Chip(
+                label: Text(category.name),
+                backgroundColor: const Color(0xFFF1ECFF),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Align(
+        alignment: Alignment.centerLeft,
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2.5),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _ServiceTile extends StatelessWidget {
+  const _ServiceTile({required this.service});
+
+  final Service service;
+
+  @override
+  Widget build(BuildContext context) {
+    final description = service.description?.trim();
+    final hasDescription = description != null && description.isNotEmpty;
+    final price = service.price;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  service.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              if (service.durationMinutes != null)
+                Row(
+                  children: [
+                    const Icon(Icons.schedule, size: 18, color: Colors.black54),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${service.durationMinutes} min',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          if (hasDescription) ...[
+            const SizedBox(height: 8),
+            Text(
+              description!,
+              style: const TextStyle(
+                fontSize: 13,
+                height: 1.4,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.shopping_bag_outlined, size: 20, color: Colors.black87),
+              const SizedBox(width: 6),
+              Text(
+                price != null ? _formatCurrency(price) : 'Precio según consulta',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TechnicianTile extends StatelessWidget {
+  const _TechnicianTile({required this.technician});
+
+  final Technician technician;
+
+  @override
+  Widget build(BuildContext context) {
+    final services = technician.services;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -516,14 +649,19 @@ class _StoreTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              item.imageUrl,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-            ),
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: Colors.black12,
+            backgroundImage:
+                technician.avatarUrl != null ? NetworkImage(technician.avatarUrl!) : null,
+            child: technician.avatarUrl == null
+                ? Text(
+                    technician.displayName.isNotEmpty
+                        ? technician.displayName.characters.first.toUpperCase()
+                        : '?',
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  )
+                : null,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -534,46 +672,63 @@ class _StoreTile extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        item.title,
+                        technician.displayName,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    const Icon(Icons.more_horiz, color: Colors.black54),
+                    if (technician.rating != null)
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Color(0xFFFFC107), size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            technician.rating!.toStringAsFixed(1),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          if (technician.reviewsCount != null) ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              '(${technician.reviewsCount})',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                          ],
+                        ],
+                      ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  item.subtitle,
-                  style: const TextStyle(
-                    fontSize: 12.5,
-                    height: 1.4,
-                    color: Colors.black87,
+                if (technician.bio != null && technician.bio!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    technician.bio!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Color(0xFFFFC107), size: 20),
-                    const SizedBox(width: 4),
-                    Text(
-                      item.rating.toStringAsFixed(1),
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(width: 6),
-                    Text('(${item.reviews})',
-                        style: const TextStyle(color: Colors.black54)),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.attach_money, size: 18, color: Colors.black54),
-                    const SizedBox(width: 2),
-                    Text(
-                      item.priceLabel,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
+                ],
+                if (services.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: [
+                      for (final service in services.take(3))
+                        Chip(
+                          label: Text(service.name),
+                          backgroundColor: const Color(0xFFF1ECFF),
+                        ),
+                      if (services.length > 3)
+                        Chip(
+                          label: Text('+${services.length - 3} más'),
+                          backgroundColor: const Color(0xFFE8D0F7),
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -583,20 +738,111 @@ class _StoreTile extends StatelessWidget {
   }
 }
 
-class _StoreItem {
-  const _StoreItem({
+class _LoadingState extends StatelessWidget {
+  const _LoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayMessage = message.isEmpty ? 'Error al cargar la información.' : message;
+
+    return _StateContainer(
+      icon: Icons.warning_amber_rounded,
+      iconColor: Colors.amber.shade700,
+      title: 'Ups, algo salió mal',
+      description: displayMessage,
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StateContainer(
+      icon: Icons.search_off_rounded,
+      iconColor: Colors.deepPurple,
+      title: 'Sin resultados',
+      description: message,
+    );
+  }
+}
+
+class _StateContainer extends StatelessWidget {
+  const _StateContainer({
+    required this.icon,
+    required this.iconColor,
     required this.title,
-    required this.subtitle,
-    required this.rating,
-    required this.reviews,
-    required this.priceLabel,
-    required this.imageUrl,
+    required this.description,
   });
 
+  final IconData icon;
+  final Color iconColor;
   final String title;
-  final String subtitle;
-  final double rating;
-  final int reviews;
-  final String priceLabel;
-  final String imageUrl;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 36, color: iconColor),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: const TextStyle(fontSize: 13.5, color: Colors.black87, height: 1.4),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatCurrency(double value) {
+  if (value >= 1000) {
+    return '\$${value.toStringAsFixed(0)} MXN';
+  }
+  return '\$${value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 2)} MXN';
 }
