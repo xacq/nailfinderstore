@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           // Fondo
           Image.asset(
-            'assets/ui/main_bg.jpg', // cámbialo a .png si corresponde
+            'assets/ui/main_bg.png',
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(color: Colors.black),
           ),

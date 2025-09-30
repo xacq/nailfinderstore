@@ -27,7 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           // HERO superior
           Image.asset(
-            'assets/ui/main_bg.jpg', // cambia a .png si corresponde
+            'assets/ui/main_bg.png',
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(color: Colors.black),
           ),
