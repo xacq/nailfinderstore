@@ -10,6 +10,7 @@ import 'features/auth/presentation/success_page.dart';
 import 'features/dashboard/presentation/dashboard_page.dart';
 import 'features/dashboard/presentation/model_preview_page.dart';
 import 'features/dashboard/presentation/courses_page.dart';
+import 'features/profile/presentation/profile_page.dart';
 
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -18,6 +19,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (_, __) => const DashboardPage()),
       GoRoute(path: '/model-preview', builder: (_, __) => const ModelPreviewPage()),
       GoRoute(path: '/courses', builder: (_, __) => const CoursesPage()),
+      GoRoute(path: '/profile', builder: (_, __) => const ProfilePage()),
       GoRoute(path: '/welcome', builder: (_, __) => const MainPage()),
       GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
