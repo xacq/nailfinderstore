@@ -126,7 +126,17 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       return servicesAsync.when(
         data: (services) {
           if (services.isEmpty) {
+
+            return const [
+              _EmptyCollectionCard(
+                icon: Icons.spa_outlined,
+                title: 'Aún no hay servicios disponibles',
+                description:
+                    'Publica tus servicios o sincroniza tu catálogo para mostrarlos aquí.',
+              ),
+            ];
             return _PlaceholderList.services();
+
           }
 
           return [
@@ -151,7 +161,18 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return techniciansAsync.when(
       data: (technicians) {
         if (technicians.isEmpty) {
+
+          return const [
+            _EmptyCollectionCard(
+              icon: Icons.people_alt_outlined,
+              title: 'Todavía no hay técnicos visibles',
+              description:
+                  'Añade a tu equipo o invita colaboradores para que aparezcan en este listado.',
+            ),
+          ];
+
           return _PlaceholderList.technicians();
+
         }
 
         return [
@@ -383,11 +404,28 @@ class _CoursesBanner extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              'https://images.unsplash.com/photo-1580983561920-5730476cef05?auto=format&fit=crop&w=240&q=80',
+            child: Container(
               width: 96,
               height: 96,
-              fit: BoxFit.cover,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF7F3DFF), Color(0xFFB892FF)],
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/ui/logo_ui.png',
+                width: 56,
+                height: 56,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.school,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -546,6 +584,21 @@ class _CategoriesChips extends StatelessWidget {
   }
 }
 
+
+class _EmptyCollectionCard extends StatelessWidget {
+  const _EmptyCollectionCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+=======
 class _PlaceholderList {
   const _PlaceholderList._();
 
@@ -624,21 +677,79 @@ class _PlaceholderTile extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            blurRadius: 8,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          leading,
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1ECFF),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              color: const Color(0xFF7F3DFF),
+              size: 28,
+            ),
+          ),
+
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.black87,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7F3FF),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: const Text(
+                    'Gestiona tu catálogo desde el panel de administración.',
+                    style: TextStyle(
+                      color: Color(0xFF7F3DFF),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
                 const _PlaceholderBar(width: 160),
                 const SizedBox(height: 8),
                 const _PlaceholderBar(width: double.infinity),
@@ -753,6 +864,7 @@ class _PlaceholderMessage extends StatelessWidget {
     );
   }
 }
+
 
 class _ServiceTile extends StatelessWidget {
   const _ServiceTile({required this.service});
