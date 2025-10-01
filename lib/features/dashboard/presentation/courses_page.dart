@@ -145,6 +145,20 @@ class _CourseTile extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                final expectedBytes = loadingProgress.expectedTotalBytes;
+                final progress = expectedBytes == null
+                    ? null
+                    : loadingProgress.cumulativeBytesLoaded / expectedBytes;
+                return _ImageLoadingPlaceholder(
+                  width: 80,
+                  height: 80,
+                  progress: progress,
+                );
+              },
               errorBuilder: (_, __, ___) => Container(
                 width: 80,
                 height: 80,
@@ -232,6 +246,16 @@ class _ModelPreviewThumbnail extends StatelessWidget {
         child: Image.network(
           imageUrl,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            final expectedBytes = loadingProgress.expectedTotalBytes;
+            final progress = expectedBytes == null
+                ? null
+                : loadingProgress.cumulativeBytesLoaded / expectedBytes;
+            return _ImageLoadingPlaceholder(progress: progress);
+          },
           errorBuilder: (_, __, ___) => Container(
             color: kDashboardCardTintColor,
             alignment: Alignment.center,
@@ -338,6 +362,33 @@ class _CoursesSegmentedControl extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ImageLoadingPlaceholder extends StatelessWidget {
+  const _ImageLoadingPlaceholder({this.width, this.height, this.progress});
+
+  final double? width;
+  final double? height;
+  final double? progress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      color: kDashboardCardTintColor.withOpacity(0.6),
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 22,
+        height: 22,
+        child: CircularProgressIndicator(
+          strokeWidth: 2.2,
+          value: progress,
+          valueColor: const AlwaysStoppedAnimation<Color>(kDashboardDarkColor),
+        ),
       ),
     );
   }
