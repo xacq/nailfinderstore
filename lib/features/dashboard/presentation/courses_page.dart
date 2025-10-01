@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'dashboard_palette.dart';
+import 'widgets/dashboard_common_widgets.dart';
+
 class CoursesPage extends StatelessWidget {
   const CoursesPage({super.key});
 
@@ -29,23 +32,84 @@ class CoursesPage extends StatelessWidget {
       ),
     ];
 
+    final previewImages = const [
+      'https://images.pexels.com/photos/4543110/pexels-photo-4543110.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/5240653/pexels-photo-5240653.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/8101187/pexels-photo-8101187.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+      'https://images.pexels.com/photos/7567944/pexels-photo-7567944.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=320',
+    ];
+
+    final theme = Theme.of(context);
+    final coursesChildCount = courses.isEmpty ? 0 : courses.length * 2 - 1;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3FF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F3FF),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: const Text(
-          'Cursos',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+      backgroundColor: kDashboardBackgroundColor,
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _CoursesHeaderBar(
+                      onBackPressed: () => Navigator.of(context).maybePop(),
+                    ),
+                    const SizedBox(height: 20),
+                    const DashboardReservationCard(),
+                    const SizedBox(height: 28),
+                    Text(
+                      'Prueba tu modelo',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: kDashboardDarkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      height: 102,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: previewImages.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        itemBuilder: (_, index) => _ModelPreviewThumbnail(
+                          imageUrl: previewImages[index],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      'Mejor valorados',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: kDashboardDarkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    const _CoursesSegmentedControl(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index.isOdd) {
+                      return const SizedBox(height: 16);
+                    }
+                    final courseIndex = index ~/ 2;
+                    return _CourseTile(item: courses[courseIndex]);
+                  },
+                  childCount: coursesChildCount,
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-        itemCount: courses.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
-        itemBuilder: (_, index) => _CourseTile(item: courses[index]),
       ),
     );
   }
@@ -81,11 +145,15 @@ class _CourseTile extends StatelessWidget {
               width: 80,
               height: 80,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Image.asset(
-                'assets/ui/course_placeholder.png',
+              errorBuilder: (_, __, ___) => Container(
                 width: 80,
                 height: 80,
-                fit: BoxFit.cover,
+                color: kDashboardCardTintColor,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.image_not_supported_outlined,
+                  color: kDashboardDarkColor,
+                ),
               ),
             ),
           ),
@@ -148,4 +216,129 @@ class _CourseItem {
   final String price;
   final String description;
   final String imageUrl;
+}
+
+class _ModelPreviewThumbnail extends StatelessWidget {
+  const _ModelPreviewThumbnail({required this.imageUrl});
+
+  final String imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: kDashboardCardTintColor,
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.image_outlined,
+              color: kDashboardDarkColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CoursesHeaderBar extends StatelessWidget {
+  const _CoursesHeaderBar({required this.onBackPressed});
+
+  final VoidCallback onBackPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            DashboardCircleIconButton(
+              icon: Icons.arrow_back_ios_new_rounded,
+              onPressed: onBackPressed,
+            ),
+            const SizedBox(width: 12),
+            DashboardCircleIconButton(
+              icon: Icons.qr_code_2_rounded,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            DashboardCircleIconButton(
+              icon: Icons.share_outlined,
+              onPressed: () {},
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            DashboardCircleIconButton(
+              icon: Icons.notifications_none_rounded,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            DashboardCircleIconButton(
+              icon: Icons.person_outline,
+              onPressed: () {},
+            ),
+            const SizedBox(width: 12),
+            DashboardCircleIconButton(
+              icon: Icons.shopping_bag_outlined,
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CoursesSegmentedControl extends StatelessWidget {
+  const _CoursesSegmentedControl();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: kDashboardCardTintColor.withOpacity(0.65),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: kDashboardDarkColor, width: 1.2),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            decoration: BoxDecoration(
+              color: kDashboardDarkColor,
+              borderRadius: BorderRadius.circular(26),
+            ),
+            child: const Text(
+              'Cursos',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Text(
+              'Talleres',
+              style: TextStyle(
+                color: kDashboardDarkColor.withOpacity(0.6),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

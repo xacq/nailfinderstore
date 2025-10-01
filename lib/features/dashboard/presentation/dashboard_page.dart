@@ -6,6 +6,9 @@ import '../application/catalog_providers.dart';
 import '../data/models/service.dart';
 import '../data/models/service_category.dart';
 import '../data/models/technician.dart';
+import 'dashboard_palette.dart';
+import 'widgets/dashboard_common_widgets.dart';
+import 'widgets/dashboard_courses_banner.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -33,7 +36,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3FF),
+      backgroundColor: kDashboardBackgroundColor,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -43,13 +46,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               onProfilePressed: () => context.push('/profile'),
             ),
             const SizedBox(height: 16),
-            _NextReservationCard(),
+            const DashboardReservationCard(),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => context.push('/model-preview'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.black,
+                backgroundColor: kDashboardDarkColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -64,14 +67,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () => context.push('/courses'),
-              child: const _CoursesBanner(),
+              child: const DashboardCoursesBanner(),
             ),
             const SizedBox(height: 28),
             Text(
               'Mejor valorados',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
+                color: kDashboardDarkColor,
               ),
             ),
             const SizedBox(height: 16),
@@ -92,8 +95,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F3DFF),
-                foregroundColor: Colors.white,
+                backgroundColor: kDashboardAccentColor,
+                foregroundColor: kDashboardDarkColor,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32),
@@ -188,6 +191,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 }
 
+
 class _HeaderBar extends StatelessWidget {
   const _HeaderBar({
     required this.onNotificationsPressed,
@@ -204,12 +208,12 @@ class _HeaderBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            _CircleIconButton(
+            DashboardCircleIconButton(
               icon: Icons.qr_code_2_rounded,
               onPressed: () {},
             ),
             const SizedBox(width: 12),
-            _CircleIconButton(
+            DashboardCircleIconButton(
               icon: Icons.share_outlined,
               onPressed: () {},
             ),
@@ -217,247 +221,23 @@ class _HeaderBar extends StatelessWidget {
         ),
         Row(
           children: [
-            _CircleIconButton(
+            DashboardCircleIconButton(
               icon: Icons.notifications_none_rounded,
               onPressed: onNotificationsPressed,
             ),
             const SizedBox(width: 12),
-            _CircleIconButton(
+            DashboardCircleIconButton(
               icon: Icons.person_outline,
               onPressed: onProfilePressed,
             ),
             const SizedBox(width: 12),
-            _CircleIconButton(
+            DashboardCircleIconButton(
               icon: Icons.shopping_bag_outlined,
               onPressed: () {},
             ),
           ],
         ),
       ],
-    );
-  }
-}
-
-class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({required this.icon, required this.onPressed});
-
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      shape: const CircleBorder(),
-      elevation: 2,
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onPressed,
-        child: SizedBox(
-          width: 42,
-          height: 42,
-          child: Icon(icon, color: Colors.black87, size: 22),
-        ),
-      ),
-    );
-  }
-}
-
-class _NextReservationCard extends StatelessWidget {
-  const _NextReservationCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          Container(
-            width: 66,
-            height: 92,
-            decoration: BoxDecoration(
-              color: const Color(0xFF5B1CFB),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  '15',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'DIC',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Próxima reserva',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Nail Finder Store',
-                  style: TextStyle(
-                    color: Colors.grey.shade900,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Avenida Yucatán 69, Ciudad de México',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 18, color: Colors.black87),
-                    const SizedBox(width: 6),
-                    Text(
-                      '05:30 PM',
-                      style: TextStyle(
-                        color: Colors.grey.shade900,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF5B1CFB),
-                      ),
-                      child: const Text('Cómo llegar'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CoursesBanner extends StatelessWidget {
-  const _CoursesBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [Color(0xFFFAE5D2), Color(0xFFE8D0F7)],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(18),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              width: 96,
-              height: 96,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF7F3DFF), Color(0xFFB892FF)],
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/ui/logo_ui.png',
-                width: 56,
-                height: 56,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Icons.school,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Cursos',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  'Aprende o actualízate',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Descubre talleres y cursos para mejorar tus técnicas profesionales.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -475,9 +255,9 @@ class _SegmentedSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardCardTintColor,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.black, width: 1.2),
+        border: Border.all(color: kDashboardDarkColor, width: 1.2),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
@@ -518,14 +298,14 @@ class _SegmentButton extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? Colors.black : Colors.transparent,
+            color: selected ? kDashboardDarkColor : Colors.transparent,
             borderRadius: BorderRadius.circular(26),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? Colors.white : Colors.black,
+              color: selected ? Colors.white : kDashboardDarkColor,
               fontWeight: FontWeight.w600,
               fontSize: 15,
             ),
@@ -555,7 +335,8 @@ class _CategoriesChips extends StatelessWidget {
           final category = categories[index];
           return Chip(
             label: Text(category.name),
-            backgroundColor: const Color(0xFFF1ECFF),
+            backgroundColor: kDashboardAccentColorLighter,
+            labelStyle: const TextStyle(color: kDashboardDarkColor, fontWeight: FontWeight.w500),
           );
         },
       ),
@@ -571,8 +352,6 @@ class _EmptyCatalogSection extends StatelessWidget {
       : type = _CatalogEmptyType.technicians;
 
   final _CatalogEmptyType type;
-
-  Color get _accentColor => const Color(0xFF7F3DFF);
 
   @override
   Widget build(BuildContext context) {
@@ -601,10 +380,9 @@ class _EmptyCatalogSection extends StatelessWidget {
           ? 'Gestiona tu catálogo desde el panel de administración.'
           : 'Administra los perfiles desde el panel de administración.',
       style: const TextStyle(
-        color: Color(0xFF7F3DFF),
         fontWeight: FontWeight.w600,
         fontSize: 12,
-      ),
+      ).copyWith(color: kDashboardAccentColor),
     );
 
     final highlights = isServices
@@ -646,7 +424,7 @@ class _EmptyCatalogSection extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: _accentColor,
+                backgroundColor: kDashboardAccentColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -663,19 +441,19 @@ class _EmptyCatalogSection extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.black,
+                foregroundColor: kDashboardDarkColor,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                side: const BorderSide(color: Colors.black87, width: 1.1),
+                side: const BorderSide(color: kDashboardDarkColor, width: 1.1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              icon: Icon(secondaryActionIcon, color: Colors.black87),
+              icon: Icon(secondaryActionIcon, color: kDashboardDarkColor),
               label: Text(
                 secondaryActionLabel,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                  color: kDashboardDarkColor,
                 ),
               ),
             ),
@@ -730,13 +508,13 @@ class _EmptyHighlightTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardBackgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5DBFF)),
+        border: Border.all(color: kDashboardAccentColorLighter),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
+            color: kDashboardAccentColorLight.withOpacity(0.15),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -747,13 +525,13 @@ class _EmptyHighlightTile extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Color(0xFFF1ECFF),
+              color: kDashboardAccentColorLighter,
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(10),
             child: Icon(
               highlight.icon,
-              color: const Color(0xFF7F3DFF),
+              color: kDashboardAccentColor,
               size: 22,
             ),
           ),
@@ -766,14 +544,14 @@ class _EmptyHighlightTile extends StatelessWidget {
                   highlight.title,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black,
+                    color: kDashboardDarkColor,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   highlight.description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.black87,
+                    color: kDashboardDarkColor.withOpacity(0.8),
                     height: 1.35,
                   ),
                 ),
@@ -804,12 +582,12 @@ class _EmptyCollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardBackgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: kDashboardAccentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -822,13 +600,13 @@ class _EmptyCollectionCard extends StatelessWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1ECFF),
+              color: kDashboardAccentColorLighter,
               borderRadius: BorderRadius.circular(18),
             ),
             alignment: Alignment.center,
             child: Icon(
               icon,
-              color: const Color(0xFF7F3DFF),
+              color: kDashboardAccentColor,
               size: 28,
             ),
           ),
@@ -842,14 +620,14 @@ class _EmptyCollectionCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                  ),
+                  ).copyWith(color: kDashboardDarkColor),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black87,
+                    color: kDashboardDarkColor.withOpacity(0.8),
                     height: 1.4,
                   ),
                 ),
@@ -891,13 +669,13 @@ class _CatalogErrorMessage extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardBackgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5DBFF)),
+        border: Border.all(color: kDashboardAccentColorLighter),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: kDashboardAccentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -906,7 +684,7 @@ class _CatalogErrorMessage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFF7F3DFF), size: 24),
+          const Icon(Icons.error_outline, color: kDashboardAccentColor, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -916,14 +694,14 @@ class _CatalogErrorMessage extends StatelessWidget {
                   'Ocurrió un error al cargar la información.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: kDashboardDarkColor,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '$error',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.black54,
+                    color: kDashboardDarkColor.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -949,12 +727,12 @@ class _ServiceTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardBackgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: kDashboardAccentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -971,17 +749,18 @@ class _ServiceTile extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                  ),
+                  ).copyWith(color: kDashboardDarkColor),
                 ),
               ),
               if (service.durationMinutes != null)
                 Row(
                   children: [
-                    const Icon(Icons.schedule, size: 18, color: Colors.black54),
+                    const Icon(Icons.schedule, size: 18, color: kDashboardDarkColor),
                     const SizedBox(width: 4),
                     Text(
                       '${service.durationMinutes} min',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600)
+                          .copyWith(color: kDashboardDarkColor),
                     ),
                   ],
                 ),
@@ -991,21 +770,22 @@ class _ServiceTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               description!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 height: 1.4,
-                color: Colors.black87,
+                color: kDashboardDarkColor.withOpacity(0.8),
               ),
             ),
           ],
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.shopping_bag_outlined, size: 20, color: Colors.black87),
+              const Icon(Icons.shopping_bag_outlined, size: 20, color: kDashboardDarkColor),
               const SizedBox(width: 6),
               Text(
                 price != null ? _formatCurrency(price) : 'Precio según consulta',
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(fontWeight: FontWeight.w600)
+                    .copyWith(color: kDashboardDarkColor),
               ),
             ],
           ),
@@ -1026,12 +806,12 @@ class _TechnicianTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: kDashboardBackgroundColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
+            color: kDashboardAccentColorLight.withOpacity(0.2),
+            blurRadius: 12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -1047,7 +827,7 @@ class _TechnicianTile extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFFF1ECFF), Color(0xFFE6D9FF)],
+                colors: [kDashboardAccentColorLighter, kDashboardAccentColorLight],
               ),
               borderRadius: BorderRadius.circular(24),
             ),
@@ -1055,7 +835,7 @@ class _TechnicianTile extends StatelessWidget {
             child: const Icon(
               Icons.person_outline,
               size: 30,
-              color: Color(0xFF7F3DFF),
+              color: kDashboardAccentColor,
             ),
           ),
           const SizedBox(width: 16),
@@ -1071,23 +851,26 @@ class _TechnicianTile extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                        ),
+                        ).copyWith(color: kDashboardDarkColor),
                       ),
                     ),
                     if (technician.rating != null)
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Color(0xFFFFC107), size: 20),
+                          const Icon(Icons.star, color: kDashboardHighlightYellow, size: 20),
                           const SizedBox(width: 4),
                           Text(
                             technician.rating!.toStringAsFixed(1),
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontWeight: FontWeight.w600)
+                                .copyWith(color: kDashboardDarkColor),
                           ),
                           if (technician.reviewsCount != null) ...[
                             const SizedBox(width: 6),
                             Text(
                               '(${technician.reviewsCount})',
-                              style: const TextStyle(color: Colors.black54),
+                              style: TextStyle(
+                                color: kDashboardDarkColor.withOpacity(0.7),
+                              ),
                             ),
                           ],
                         ],
@@ -1098,10 +881,10 @@ class _TechnicianTile extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     technician.bio!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Colors.black87,
+                      color: kDashboardDarkColor.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -1114,12 +897,14 @@ class _TechnicianTile extends StatelessWidget {
                       for (final service in services.take(3))
                         Chip(
                           label: Text(service.name),
-                          backgroundColor: const Color(0xFFF1ECFF),
+                          backgroundColor: kDashboardAccentColorLighter,
+                          labelStyle: const TextStyle(color: kDashboardDarkColor),
                         ),
                       if (services.length > 3)
                         Chip(
                           label: Text('+${services.length - 3} más'),
-                          backgroundColor: const Color(0xFFE8D0F7),
+                          backgroundColor: kDashboardAccentColorLight,
+                          labelStyle: const TextStyle(color: kDashboardDarkColor),
                         ),
                     ],
                   ),
